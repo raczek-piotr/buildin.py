@@ -1,46 +1,44 @@
-"""Python setup.py for buildin.py package"""
-import io
-import os
-from setuptools import find_packages, setup
+from setuptools import setup
+import re, os
 
+#on_rtd = os.getenv('READTHEDOCS') == 'True'
 
-def read(*paths, **kwargs):
-    """Read the contents of a text file safely.
-    >>> read("project_name", "VERSION")
-    '0.1.0'
-    >>> read("README.md")
-    ...
-    """
+requirements = []
+with open('requirements.txt') as f:
+  requirements = f.read().splitlines()
 
-    content = ""
-    with io.open(
-        os.path.join(os.path.dirname(__file__), *paths),
-        encoding=kwargs.get("encoding", "utf8"),
-    ) as open_file:
-        content = open_file.read().strip()
-    return content
+#if on_rtd:
+#  requirements.append('sphinxcontrib-napoleon')
 
+version = ''
+with open('buildin/__init__.py') as f:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
-def read_requirements(path):
-    return [
-        line.strip()
-        for line in read(path).split("\n")
-        if not line.startswith(('"', "#", "-", "git+"))
-    ]
+if not version:
+    raise RuntimeError('version is not set')
 
+readme = ''
+with open('README.md') as f:
+    readme = f.read()
 
-setup(
-    name="buildin.py",
-    version=read("buildin.py", "0.0.1"),
-    description="for automaticaly update my rpi's softwere (not for comercial use)",
-    url="https://github.com/raczek-piotr/buildin.py/",
-    long_description=read("README.md"),
-    #long_description_content_type="text/markdown",
-    author="Piotr Raczek",
-    packages=find_packages(exclude=["tests", ".github"]),
-    install_requires=read_requirements("requirements.txt"),
-    entry_points={
-        "console_scripts": ["project_name = project_name.__main__:main"]
-    },
-    #extras_require={"test": read_requirements("requirements-test.txt")},
+extras_require = {}
+
+setup(name='buildin.py',
+      author='PR',
+      url='https://github.com/raczek-piotr/buildin.py/',
+      version=version,
+      packages=['buildin', 'ECVI'],
+      license='none',
+      description='For automaticaly update my rpi's softwere (not for comercial use)',
+      long_description=readme,
+      include_package_data=True,
+      install_requires=requirements,
+      extras_require=extras_require,
+      classifiers=[
+        'Development Status :: 0',
+        'Natural Language :: Polish',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.12',
+      ]
 )
