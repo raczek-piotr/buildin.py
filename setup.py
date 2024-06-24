@@ -31,7 +31,7 @@ def read_requirements(path):
 
 setup(
     name="buildin.py",
-    version=read("buildin.py", "VERSION"),
+    version=read("buildin.py", "0.0.1"),
     description="for automaticaly update my rpi's softwere (not for comercial use)",
     url="https://github.com/raczek-piotr/buildin.py/",
     long_description=read("README.md"),
