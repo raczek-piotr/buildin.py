@@ -6,7 +6,7 @@ ram = {"ax": 0,
        "cx": 0,
        "dx": 0,
 
-       "version": "0.0.2",
+       "version": "0.0.3",
        "line": 0,
 
        "user": "",
@@ -20,6 +20,9 @@ def emu(command): #part of it -PR-
 
     if first_caracter == "(":
         return ram[command[1:-1]]
+
+    if first_caracter == "[":
+        return ram[emu(command[1:-1])]
 
     elif first_caracter in {'"', "'"}:
         return command[1:-1]
@@ -44,11 +47,19 @@ def ecvi(user, message, flag = ""):
 
         if command == "jump":
             if emu(line[2]) > 0:
-                ram["line"] = emu(line[1]) -1 # it will increase +1 -PR-
+                ram["line"] = emu(line[1]) -1 # it would be increased +1 -PR-
 
         elif command == "!jump":
             if emu(line[2]) <= 0:
-                ram["line"] = emu(line[1]) -1 # it will increase +1 -PR-
+                ram["line"] = emu(line[1]) -1 # —||—
+
+        if command == "mov":
+            if emu(line[2]) > 0:
+                ram["line"] += emu(line[1]) -1 # —||—
+
+        elif command == "!mov":
+            if emu(line[2]) <= 0:
+                ram["line"] += emu(line[1]) -1 # —||—
 
         elif command == "print":
             value = ""
@@ -70,6 +81,13 @@ def ecvi(user, message, flag = ""):
                 value += str(emu(i))
             ram[variable] = value
 
+        elif command == "multi":
+            variable = line[1]
+            value = 1
+            for i in line[2:]:
+                value *= str(emu(i))
+            ram[variable] = value
+
         elif command == "def":
             ram.update({line[1]: emu(line[2])})
 
@@ -89,3 +107,6 @@ def ecvi(user, message, flag = ""):
 #jump 0 1
 #print "user:^" (user)
 #print "version:^" (version)"""))
+print(ecvi("no.user" , """ecvi
+str ax "version"
+print [(ax)]"""))

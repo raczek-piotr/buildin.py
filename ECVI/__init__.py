@@ -2,6 +2,6 @@ __title__ = 'ECVI'
 __author__ = 'PR'
 __license__ = 'none'
 __copyright__ = 'Copyright 2024 raczek-piotr'
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 from .core import ecvi
