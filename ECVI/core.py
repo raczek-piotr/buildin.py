@@ -39,7 +39,7 @@ def ecvi(user, message, p_message = ""):
         elif command == "print":
             value = ""
             for i in line[1:]:
-                value += str(emu(i)).replace("_", " ")
+                value += str(emu(i)).replace("^", " ")
             output += value + "\n"
 
         elif command == "=":
@@ -52,12 +52,22 @@ def ecvi(user, message, p_message = ""):
 
     return output
 
-#   program    -PR-
+#  program example  -PR- 
 #print(ecvi("no.user" , """ecvi
 #print (ax)
 #= ax (ax) 1
 #= bx (ax) -10
 #jump 5 (bx)
 #jump 0 1
-#print "user:_" (user)
-#print "version:_" (version)"""))
+#print "user:^" (user)
+#print "version:^" (version)"""))
+
+
+
+
+
+
+
+
+
+        
