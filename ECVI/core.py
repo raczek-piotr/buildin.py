@@ -89,23 +89,3 @@ def ecvi(user, message, flag = ""):
 #jump 0 1
 #print "user:^" (user)
 #print "version:^" (version)"""))
-
-#  program example2  -PR-
-print(ecvi("no.user" , """ecvi
-def (ax)
-set ax (ax) 1
-set bx (ax) -10
-jump 5 (bx)
-jump 0 1
-print "user:^" (user)
-print "version:^" (version)"""))
-
-
-
-
-
-
-
-
-
-        
