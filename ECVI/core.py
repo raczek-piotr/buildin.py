@@ -34,9 +34,11 @@ def emu(command): #part of it -PR-
         return int(command)
 
 def ecvi(user, message, flag = ""):
-    global ram
-    ram["user"], ram["line"], ram["time"] = user, 0, time()
-    output = ""
+   global ram
+   ram["user"], ram["line"], ram["time"] = user, 0, time()
+   output = ""
+
+   try:
 
     program = [i.split(" ") for i in message[5:].split("\n")]
     long = len(program)
@@ -85,7 +87,7 @@ def ecvi(user, message, flag = ""):
             variable = line[1]
             value = 1
             for i in line[2:]:
-                value *= str(emu(i))
+                value *= int(emu(i))
             ram[variable] = value
 
         elif command == "def":
@@ -98,6 +100,9 @@ def ecvi(user, message, flag = ""):
         ram["line"] += 1
     return output
 
+   except Exception as e:
+        return e
+
 #  program example  -PR-
 #print(ecvi("no.user" , """ecvi
 #print (ax)
@@ -107,6 +112,3 @@ def ecvi(user, message, flag = ""):
 #jump 0 1
 #print "user:^" (user)
 #print "version:^" (version)"""))
-print(ecvi("no.user" , """ecvi
-str ax "version"
-print [(ax)]"""))

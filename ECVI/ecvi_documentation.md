@@ -9,7 +9,7 @@ easy if, without specific else (witch is the next line)
 easy if, without specific else (witch is the next line)
 `!jump to_what_line_(int) jump_if_<=_0_(int)`
 ### mov
-like jumps, but you do not name a specific line, but the shift from the `mov` line
+like jumps, but you do not name a specific line, but the shift from the `mov` line `-` is back words
 `mov -2 (ax)`
 ### !mov
 like !jump, but mov
