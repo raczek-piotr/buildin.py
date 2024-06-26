@@ -6,7 +6,7 @@ ram = {"ax": 0,
        "cx": 0,
        "dx": 0,
 
-       "version": "0.0.3",
+       "version": "0.0.4",
        "line": 0, # pc -PR-
        #"sp": [],
        #"bp": [],
