@@ -17,6 +17,9 @@ with open('buildin/__init__.py') as f:
 if not version:
     raise RuntimeError('version is not set')
 
+with open('ECVI/__init__.py') as f:
+    version += "+ECVI-" + re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+
 readme = ''
 with open('README.md') as f:
     readme = f.read()

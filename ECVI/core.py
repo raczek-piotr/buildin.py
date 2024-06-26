@@ -7,108 +7,110 @@ ram = {"ax": 0,
        "dx": 0,
 
        "version": "0.0.3",
-       "line": 0,
+       "line": 0, # pc -PR-
+       #"sp": [],
+       #"bp": [],
 
        "user": "",
        "time": 0}
 
 
-def emu(command): #part of it -PR-
+def emu(command):  # part of it -PR-
     global ram
 
-    first_caracter = command[0]
+    first_character = command[0]
 
-    if first_caracter == "(":
+    if first_character == "(":
         return ram[command[1:-1]]
 
-    if first_caracter == "[":
-        return ram[emu(command[1:-1])]
+    if first_character == "[":
+        q = emu(command[1:-1])
+        return ram[str(q)]
 
-    elif first_caracter in {'"', "'"}:
+    elif first_character in {'"', "'"}:
         return command[1:-1]
 
-    elif first_caracter == '-':
-        return - emu(command[1:])
+    elif first_character == '-':
+        return -emu(command[1:])
 
     else:
         return int(command)
 
-def ecvi(user, message, flag = ""):
-   global ram
-   ram["user"], ram["line"], ram["time"] = user, 0, time()
-   output = ""
+def ecvi(user, message, flag=""):
+    global ram
+    pc = 0 #program's line -PR-
+    ram["user"], ram["line"], ram["time"] = user, pc, time()
+    output = ""
 
-   try:
+    try:
+        program = [i.split(" ") for i in message.split("\n")][1:]
+        long = len(program)
+        while ram["line"] < long:
+            line = program[ram["line"]]
+            command = line[0]
 
-    program = [i.split(" ") for i in message[5:].split("\n")]
-    long = len(program)
-    while ram["line"] < long:
-        line = program[ram["line"]]
-        command = line[0]
+            if command in {"jump", "!jump", "mov", "!mov"}:
+                if command == "jump":
+                    if emu(line[2]) > 0:
+                        pc = emu(line[1]) - 1  # it would be increased +1 -PR-
 
+                elif command == "!jump":
+                    if emu(line[2]) <= 0:
+                        pc = emu(line[1]) - 1  # —||—
 
-        if command == "jump":
-            if emu(line[2]) > 0:
-                ram["line"] = emu(line[1]) -1 # it would be increased +1 -PR-
+                elif command == "mov":
+                    if emu(line[2]) > 0:
+                        pc += emu(line[1]) - 1  # —||—
 
-        elif command == "!jump":
-            if emu(line[2]) <= 0:
-                ram["line"] = emu(line[1]) -1 # —||—
+                else:  # if command == "!mov":
+                    if emu(line[2]) <= 0:
+                        pc += emu(line[1]) - 1  # —||—
 
-        if command == "mov":
-            if emu(line[2]) > 0:
-                ram["line"] += emu(line[1]) -1 # —||—
+            elif command == "print":
+                value = ""
+                for i in line[1:]:
+                    value += str(emu(i)).replace("^", " ")
+                output += value + "\n"
 
-        elif command == "!mov":
-            if emu(line[2]) <= 0:
-                ram["line"] += emu(line[1]) -1 # —||—
+            elif command == "set":
+                variable = line[1]
+                value = 0
+                for i in line[2:]:
+                    value += int(emu(i))
+                ram[variable] = value
 
-        elif command == "print":
-            value = ""
-            for i in line[1:]:
-                value += str(emu(i)).replace("^", " ")
-            output += value + "\n"
+            elif command == "str":
+                variable = line[1]
+                value = ""
+                for i in line[2:]:
+                    value += str(emu(i))
+                ram[variable] = value
 
-        elif command == "set":
-            variable = line[1]
-            value = 0
-            for i in line[2:]:
-                value += int(emu(i))
-            ram[variable] = value
+            elif command == "multi":
+                variable = line[1]
+                value = 1
+                for i in line[2:]:
+                    value *= int(emu(i))
+                ram[variable] = value
 
-        elif command == "str":
-            variable = line[1]
-            value = ""
-            for i in line[2:]:
-                value += str(emu(i))
-            ram[variable] = value
+            elif command == "def":
+                ram.update({line[1]: emu(line[2])})
 
-        elif command == "multi":
-            variable = line[1]
-            value = 1
-            for i in line[2:]:
-                value *= int(emu(i))
-            ram[variable] = value
+            elif command == "time":
+                ram["time"] = time()
 
-        elif command == "def":
-            ram.update({line[1]: emu(line[2])})
+            pc += 1
+            ram["line"] = pc
+        return output
 
-        elif command == "time":
-            ram["time"] = time()
-
-
-        ram["line"] += 1
-    return output
-
-   except Exception as e:
-        return e
+    except Exception as e:
+        return "Error: " + str(e)
 
 #  program example  -PR-
-#print(ecvi("no.user" , """ecvi
-#print (ax)
-#set ax (ax) 1
-#set bx (ax) -10
-#jump 5 (bx)
-#jump 0 1
-#print "user:^" (user)
-#print "version:^" (version)"""))
+'''print(ecvi("no.user" , """ecvi
+print (ax)
+set ax (ax) 1
+set bx (ax) -10
+!jump 0 (bx)
+print "user:^" (user)
+print "version:^" (version)"""))'''
