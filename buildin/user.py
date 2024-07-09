@@ -14,7 +14,7 @@ def user(user, message, p_message, p):
         return "`Command line is locked` 😋"
 
     if p_message[0] == "ecvi":
-        return _ecvi(user, message)
+        return _ecvi(user, message, admin)
     if p_message[0] == "help":
         return "## `Commands:`\n- `ecvi`\n- `ls`\n- `cd`\n- `mydir`\n- `read`\n - `, write, mkdir, rmdir, copy, paste, copyinfo`"
     if p_message[0] == "ls":
@@ -35,11 +35,14 @@ def user(user, message, p_message, p):
             t = ""
             for i in p["dir"].split("/")[:-1]:
                 t += "/" + i
-            p["dir"] = t[1:] if len(t) > 0 else "/"
+            p["dir"] = t[1:] if len(t) > 1 else "/"
         elif p_message[1] ==  "..":
-            p["dir"] = "/home/pi"
+            p["dir"] = "/home"
         else:
-            t = p["dir"] + "/" + p_message[1]
+            if p_message[1][0] != "/":
+                t = p["dir"] + "/" + p_message[1]
+            else:
+                t = p_message[1]
             if os.path.exists(t):
                 p["dir"] = t
             else:

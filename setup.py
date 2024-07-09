@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
   requirements = f.read().splitlines()
 
 #if on_rtd:
-#  requirements.append('sphinxcontrib-napoleon')
+#  requirements.append('')
 
 version = ''
 with open('buildin/__init__.py') as f:
