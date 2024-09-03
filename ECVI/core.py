@@ -47,10 +47,10 @@ def ecvi(user, message, flag=""):
         program = [i.split(" ") for i in message.split("\n")][1:]
         long = len(program)
         while ram["ip"] < long and ram["time"] < maxtime:
-            line = program[ram["line"]]
+            line = program[ram["ip"]]
             command = line[0]
 
-            if command in {"jump", "!jump", "mov", "!mov", "loop}:
+            if command in {"jump", "!jump", "mov", "!mov", "loop"}:
                 if command == "jump":
                     if emu(line[2]) > 0:
                         pc = emu(line[1]) - 1  # it would be increased +1 -PR-
@@ -68,9 +68,9 @@ def ecvi(user, message, flag=""):
                         pc += emu(line[1]) - 1  # —||—
 
                 else: # loop
-                    if emu(line[2]) > 0:
+                    if emu("(" + line[2] + ")") > 0:
                         pc = emu(line[1]) - 1  # —||—
-                        ram[line[1]] -= 1
+                        ram[line[2]] -= 1
 
             elif command == "print":
                 value = ""
