@@ -5,11 +5,11 @@ ram = {"ax": 0,
        "bx": 0,
        "cx": 0,
        "dx": 0,
+       "ip": 0,
+       "z": 0, # 1.
+       "r": 0, # 2.
 
-       "version": "0.0.4",
-       "line": 0, # pc -PR-
-       #"sp": [],
-       #"bp": [],
+       "version": "0.0.5",
 
        "user": "",
        "time": 0}
@@ -39,17 +39,18 @@ def emu(command):  # part of it -PR-
 def ecvi(user, message, flag=""):
     global ram
     pc = 0 #program's line -PR-
-    ram["user"], ram["line"], ram["time"] = user, pc, time()
+    ram["user"], ram["ip"], ram["time"] = user, pc, time()
+    maxtime = ram["time"] + 60
     output = ""
 
     try:
         program = [i.split(" ") for i in message.split("\n")][1:]
         long = len(program)
-        while ram["line"] < long:
+        while ram["ip"] < long and ram["time"] < maxtime:
             line = program[ram["line"]]
             command = line[0]
 
-            if command in {"jump", "!jump", "mov", "!mov"}:
+            if command in {"jump", "!jump", "mov", "!mov", "loop}:
                 if command == "jump":
                     if emu(line[2]) > 0:
                         pc = emu(line[1]) - 1  # it would be increased +1 -PR-
@@ -62,9 +63,14 @@ def ecvi(user, message, flag=""):
                     if emu(line[2]) > 0:
                         pc += emu(line[1]) - 1  # —||—
 
-                else:  # if command == "!mov":
+                elif command == "!mov":
                     if emu(line[2]) <= 0:
                         pc += emu(line[1]) - 1  # —||—
+
+                else: # loop
+                    if emu(line[2]) > 0:
+                        pc = emu(line[1]) - 1  # —||—
+                        ram[line[1]] -= 1
 
             elif command == "print":
                 value = ""
@@ -93,14 +99,20 @@ def ecvi(user, message, flag=""):
                     value *= int(emu(i))
                 ram[variable] = value
 
-            elif command == "def":
-                ram.update({line[1]: emu(line[2])})
+            elif command == "split":
+                variable = line[1]
+                value = line[2]
+                ram[variable] = ram[variable].split(value)
 
-            elif command == "time":
-                ram["time"] = time()
+            elif command == "pop":
+                variable = line[1]
+                value = line[2]
+                ram[variable] = ram[value].pop()
 
             pc += 1
-            ram["line"] = pc
+            ram["ip"] = pc
+            ram["time"] = time()
+
         return output
 
     except Exception as e:
