@@ -101,13 +101,21 @@ def ecvi(user, message, flag=""):
 
             elif command == "split":
                 variable = line[1]
-                value = line[2]
+                value = emu(line[2])
                 ram[variable] = ram[variable].split(value)
 
             elif command == "pop":
                 variable = line[1]
                 value = line[2]
+                ram[variable] = ram[value].pop(0)
+
+            elif command == "!pop":
+                variable = line[1]
+                value = line[2]
                 ram[variable] = ram[value].pop()
+
+            elif command == "nop":
+                pass
 
             pc += 1
             ram["ip"] = pc

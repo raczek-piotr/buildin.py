@@ -8,15 +8,15 @@ def user(user, message, p_message, p):
     admin = True if user in p["admin"] else False
 
     if not admin and user not in p["user"]:
-        return "`You don't have permisions` 😋"
+        return "`You don't have permisions` 🙈"
 
     if p["lock"] and not admin:
         return "`Command line is locked` 😋"
 
     if p_message[0] == "ecvi":
-        return _ecvi(user, message, admin)
+        return _ecvi(user, message)
     if p_message[0] == "help":
-        return "## `Commands:`\n- `ecvi`\n- `ls`\n- `cd`\n- `mydir`\n- `read`\n - `, write, mkdir, rmdir, copy, paste, copyinfo`"
+        return "## `Commands:`\n- `ecvi`\n- `ls`\n- `cd`\n- `mydir`\n- `read`\n- `write`\n- `append`\n - `, mkdir, rmdir, copy, paste, copyinfo`"
     if p_message[0] == "ls":
         d = p_message[1] if len(p_message) > 1 else p["dir"]
         try:
@@ -31,18 +31,19 @@ def user(user, message, p_message, p):
     if p_message[0] == "cd":
         if len(p_message) < 2:
             return "`No argument`"
-        if p_message[1] ==  ".":
+        if p_message[1] ==  "..":
             t = ""
             for i in p["dir"].split("/")[:-1]:
                 t += "/" + i
-            p["dir"] = t[1:] if len(t) > 1 else "/"
-        elif p_message[1] ==  "..":
-            p["dir"] = "/home"
-        else:
-            if p_message[1][0] != "/":
-                t = p["dir"] + "/" + p_message[1]
+            p["dir"] = t[1:] if len(t) > 0 else "/"
+        elif p_message[1][0] ==  "/":
+            t = p_message[1]
+            if os.path.exists(t):
+                p["dir"] = t
             else:
-                t = p_message[1]
+                return "`Directory not found`"
+        else:
+            t = p["dir"] + "/" + p_message[1]
             if os.path.exists(t):
                 p["dir"] = t
             else:
@@ -51,10 +52,34 @@ def user(user, message, p_message, p):
     if p_message[0] == "mydir":
         return "`" + p["dir"] + "`"
     if p_message[0] == "read":
-        d = p_message[1] if len(p_message) > 1 else p["dir"]
+        d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
         if not os.path.exists(d):
             return "`"+d+"`\n`Cannot find the file/directory`"
             #await ctx.send(file=discord.File(r'c:\location\of\the_file_to\send.png'))
         return File(d)
+    if p_message[0] == "write":
+        d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
+        if not os.path.exists(d):
+            return "`"+d+"`\n`Cannot find the file/directory`"
+            #await ctx.send(file=discord.File(r'c:\location\of\the_file_to\send.png'))
+        m = message.split("\n")
+        t = ""
+        for i in m[1:]:
+            t = t + i + "\n"
+        with open(d, "a") as txt:
+            txt.write(t)
+        return "writed…"
+    if p_message[0] == "append":
+        d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
+        if not os.path.exists(d):
+            return "`"+d+"`\n`Cannot find the file/directory`"
+            #await ctx.send(file=discord.File(r'c:\location\of\the_file_to\send.png'))
+        m = message.split("\n")
+        t = ""
+        for i in m[1:]:
+            t = t + i + "\n"
+        with open(d, "a") as txt:
+            txt.write(t)
+        return "appended…"
     return "`Command not found`"
 

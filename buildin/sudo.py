@@ -10,10 +10,10 @@ def sudo(user, message, p_message, p):
         return "## `Sudo commands:`\n- `sudo lock`\n- `sudo unlock`\n- `sudo adduser`\n- `sudo deluser`\n- `sudo user`" # read, write, mkdir, rmdir, copy, paste, copyinfo
     if p_message[0] == "lock":
         p["lock"] = True
-        return "`Locked the command line` 😋"
+        return "`Locked the command line`"
     if p_message[0] == "unlock":
         p["lock"] = False
-        return "`Unlocked the command line` 😋"
+        return "`Unlocked the command line`"
     if p_message[0] == "adduser":
         if len(p_message) > 1:
             p["user"].add(p_message[1])
