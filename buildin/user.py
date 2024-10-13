@@ -2,7 +2,10 @@ import os
 from random import randint
 from discord import File
 from ECVI import ecvi as _ecvi
-
+try:
+    from curses import wrapper
+except:
+    wrapper = False
 
 def user(user, message, p_message, p):
     admin = True if user in p["admin"] else False
@@ -14,9 +17,17 @@ def user(user, message, p_message, p):
         return "`Command line is locked` 😋"
 
     if p_message[0] == "ecvi":
-        return _ecvi(user, message)
+        return _ecvi(False, user, message, p["dir"])
+    if p_message[0] == "execute":
+        #if wrapper:
+            d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
+            with open(d, "r") as txt:
+                return _ecvi(False, user, txt.read(), p["dir"])
+                #return wrapper(_ecvi, user, txt.read())
+        #return "no `wrapper`"
+
     if p_message[0] == "help":
-        return "## `Commands:`\n- `ecvi`\n- `ls`\n- `cd`\n- `mydir`\n- `read`\n- `write`\n- `append`\n - `, mkdir, rmdir, copy, paste, copyinfo`"
+        return "## `Commands:`\n- `ecvi`\n- `ls`\n- `cd`\n- `mydir`\n- `print`\n- `read`\n- `write`\n- `append`\n - `execute`\n - `, mkdir, rmdir, copy, paste, copyinfo`"
     if p_message[0] == "ls":
         d = p_message[1] if len(p_message) > 1 else p["dir"]
         try:
@@ -51,6 +62,14 @@ def user(user, message, p_message, p):
         return "`" + p["dir"] + "`"
     if p_message[0] == "mydir":
         return "`" + p["dir"] + "`"
+    if p_message[0] == "print":
+        d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
+        if not os.path.exists(d):
+            return "`"+d+"`\n`Cannot find the file/directory`"
+            #await ctx.send(file=discord.File(r'c:\location\of\the_file_to\send.png'))
+        with open(d, "r") as txt:
+            t=txt.read()
+        return t
     if p_message[0] == "read":
         d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
         if not os.path.exists(d):
@@ -66,8 +85,8 @@ def user(user, message, p_message, p):
         t = ""
         for i in m[1:]:
             t = t + i + "\n"
-        with open(d, "a") as txt:
-            txt.write(t)
+        with open(d, "w") as txt:
+            txt.write(t[:-1])
         return "writed…"
     if p_message[0] == "append":
         d = p_message[1] if "/" in p_message[1] else p["dir"] + "/" + p_message[1]
@@ -79,7 +98,7 @@ def user(user, message, p_message, p):
         for i in m[1:]:
             t = t + i + "\n"
         with open(d, "a") as txt:
-            txt.write(t)
+            txt.write(t[:-1])
         return "appended…"
-    return "`Command not found`"
+    #return "`Command not found`"
 
